@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🚀 TONATA Logbook - Auto Integration</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: white;
+        }
+        
+        .header {
+            text-align: center;
+            padding: 40px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+        }
+        
+        .logo {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .title {
+            font-size: 3rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #10b981, #3b82f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .subtitle {
+            font-size: 1.3rem;
+            opacity: 0.9;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+        
+        .card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+        
+        .card-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            display: block;
+        }
+        
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        
+        .card-description {
+            margin-bottom: 20px;
+            opacity: 0.9;
+            line-height: 1.6;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.4);
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.6);
+        }
+        
+        .btn.primary {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            box-shadow: 0 5px 15px rgba(59, 130, 246, 0.4);
+        }
+        
+        .btn.primary:hover {
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.6);
+        }
+        
+        .btn.secondary {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            box-shadow: 0 5px 15px rgba(245, 158, 11, 0.4);
+        }
+        
+        .btn.secondary:hover {
+            box-shadow: 0 8px 25px rgba(245, 158, 11, 0.6);
+        }
+        
+        .status-bar {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 15px;
+            margin: 30px 0;
+            text-align: center;
+        }
+        
+        .feature-list {
+            list-style: none;
+            margin: 20px 0;
+        }
+        
+        .feature-list li {
+            margin: 10px 0;
+            padding-left: 30px;
+            position: relative;
+        }
+        
+        .feature-list li::before {
+            content: "✅";
+            position: absolute;
+            left: 0;
+            font-size: 1.2rem;
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 40px 20px;
+            opacity: 0.8;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            margin-top: 60px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">🚀</div>
+        <h1 class="title">TONATA Logbook</h1>
+        <p class="subtitle">Auto-Integration Dashboard</p>
+    </div>
+    
+    <div class="container">
+        <div class="status-bar" id="status">
+            <span>🔄 Checking system status...</span>
+        </div>
+        
+        <div class="grid">
+            <!-- Auto-Complete Integration -->
+            <div class="card">
+                <span class="card-icon">🎯</span>
+                <h3 class="card-title">Auto-Complete Integration</h3>
+                <p class="card-description">
+                    Sistem otomatis yang memeriksa semua komponen dan langsung mengaktifkan integrasi Table.js dengan database.
+                </p>
+                <ul class="feature-list">
+                    <li>Auto-check backend & database</li>
+                    <li>Auto-inject integration script</li>
+                    <li>Real-time data dari PostgreSQL</li>
+                    <li>Permission control otomatis</li>
+                </ul>
+                <a href="/auto-complete.html" class="btn">🚀 Start Auto-Integration</a>
+            </div>
+            
+            <!-- Direct Access -->
+            <div class="card">
+                <span class="card-icon">⚡</span>
+                <h3 class="card-title">Direct Access</h3>
+                <p class="card-description">
+                    Akses langsung ke Table.js yang sudah terintegrasi dengan backend. Data real-time tanpa setup manual.
+                </p>
+                <ul class="feature-list">
+                    <li>Langsung ke Table.js terintegrasi</li>
+                    <li>Data real dari database</li>
+                    <li>Auto-notification active</li>
+                    <li>Permission control ready</li>
+                </ul>
+                <a href="/auto-table" class="btn primary">⚡ Open Integrated Table</a>
+            </div>
+            
+            <!-- Manual Tools -->
+            <div class="card">
+                <span class="card-icon">🛠️</span>
+                <h3 class="card-title">Manual Tools</h3>
+                <p class="card-description">
+                    Tools manual untuk testing, debugging, dan kustomisasi integrasi sesuai kebutuhan.
+                </p>
+                <ul class="feature-list">
+                    <li>Test integration script</li>
+                    <li>Debug database connection</li>
+                    <li>Manual injection tools</li>
+                    <li>API testing interface</li>
+                </ul>
+                <a href="/activate-integration.html" class="btn secondary">🛠️ Manual Tools</a>
+            </div>
+            
+            <!-- Documentation -->
+            <div class="card">
+                <span class="card-icon">📚</span>
+                <h3 class="card-title">Documentation</h3>
+                <p class="card-description">
+                    Dokumentasi lengkap tentang cara kerja integrasi, API endpoints, dan troubleshooting.
+                </p>
+                <ul class="feature-list">
+                    <li>API documentation</li>
+                    <li>Integration guide</li>
+                    <li>Troubleshooting tips</li>
+                    <li>Database schema info</li>
+                </ul>
+                <a href="/table-integration-script" class="btn secondary">📚 View Documentation</a>
+            </div>
+            
+            <!-- Testing Interface -->
+            <div class="card">
+                <span class="card-icon">🧪</span>
+                <h3 class="card-title">Testing Interface</h3>
+                <p class="card-description">
+                    Interface testing untuk memverifikasi semua komponen sistem berjalan dengan baik.
+                </p>
+                <ul class="feature-list">
+                    <li>Backend health check</li>
+                    <li>Database connectivity test</li>
+                    <li>API endpoints testing</li>
+                    <li>Authentication testing</li>
+                </ul>
+                <a href="/test-integration.html" class="btn secondary">🧪 Run Tests</a>
+            </div>
+            
+            <!-- Original Frontend -->
+            <div class="card">
+                <span class="card-icon">📖</span>
+                <h3 class="card-title">Original Frontend</h3>
+                <p class="card-description">
+                    Akses ke frontend React original tanpa integrasi. Untuk perbandingan atau development.
+                </p>
+                <ul class="feature-list">
+                    <li>Frontend React original</li>
+                    <li>Data dummy default</li>
+                    <li>No backend integration</li>
+                    <li>Development mode</li>
+                </ul>
+                <a href="http://localhost:3000/Homepage" target="_blank" class="btn secondary">📖 Original Frontend</a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="footer">
+        <p>🎉 <strong>TONATA Logbook Auto-Integration System</strong></p>
+        <p>Backend running on port 5001 | Frontend integration ready</p>
+        <p><em>Developed with ❤️ for seamless database integration</em></p>
+    </div>
+
+    <script>
+        async function checkSystemStatus() {
+            const statusEl = document.getElementById('status');
+            
+            try {
+                // Check backend
+                const backendResponse = await fetch('/api/health');
+                const backendOk = backendResponse.ok;
+                
+                // Check database
+                const dbResponse = await fetch('/api/table-data');
+                const dbData = await dbResponse.json();
+                const dbOk = dbData.success;
+                
+                // Check frontend
+                let frontendOk = false;
+                try {
+                    const frontendResponse = await fetch('http://localhost:3000/Homepage');
+                    frontendOk = frontendResponse.ok;
+                } catch (e) {
+                    frontendOk = false;
+                }
+                
+                if (backendOk && dbOk && frontendOk) {
+                    statusEl.innerHTML = `
+                        <span style="color: #10b981; font-weight: bold;">
+                            ✅ All Systems Ready! 
+                            Backend ✅ | Database ✅ | Frontend ✅ | 
+                            Data: ${dbData.totalItems || 0} logbook entries
+                        </span>
+                    `;
+                } else if (backendOk && dbOk) {
+                    statusEl.innerHTML = `
+                        <span style="color: #f59e0b; font-weight: bold;">
+                            ⚠️ Backend Ready, Frontend Check Required
+                            Backend ✅ | Database ✅ | Frontend ${frontendOk ? '✅' : '❌'}
+                        </span>
+                    `;
+                } else {
+                    statusEl.innerHTML = `
+                        <span style="color: #ef4444; font-weight: bold;">
+                            ❌ System Issues Detected
+                            Backend ${backendOk ? '✅' : '❌'} | Database ${dbOk ? '✅' : '❌'} | Frontend ${frontendOk ? '✅' : '❌'}
+                        </span>
+                    `;
+                }
+            } catch (error) {
+                statusEl.innerHTML = `
+                    <span style="color: #ef4444; font-weight: bold;">
+                        ❌ Unable to check system status
+                    </span>
+                `;
+            }
+        }
+        
+        // Check status on load
+        window.addEventListener('load', () => {
+            setTimeout(checkSystemStatus, 1000);
+        });
+    </script>
+</body>
+</html>

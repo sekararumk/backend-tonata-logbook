@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Table.js Integration</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f9fafb;
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .status-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .success { color: #10b981; font-weight: bold; }
+        .error { color: #ef4444; font-weight: bold; }
+        .warning { color: #f59e0b; font-weight: bold; }
+        .info { color: #3b82f6; font-weight: bold; }
+        .btn {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+            transition: background 0.3s;
+        }
+        .btn:hover { background: #2563eb; }
+        .btn.success { background: #10b981; }
+        .btn.success:hover { background: #059669; }
+        .btn.warning { background: #f59e0b; }
+        .btn.warning:hover { background: #d97706; }
+        .code-block {
+            background: #f3f4f6;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            overflow-x: auto;
+            margin: 10px 0;
+        }
+        .test-results {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-top: 20px;
+        }
+        #log {
+            background: #1f2937;
+            color: #f9fafb;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            height: 300px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🔗 Table.js Integration Test</h1>
+        <p>Testing backend integration dengan frontend Table.js</p>
+    </div>
+
+    <div class="status-card">
+        <h2>📊 Status Backend</h2>
+        <div id="backend-status">
+            <span class="info">🔄 Checking backend status...</span>
+        </div>
+    </div>
+
+    <div class="status-card">
+        <h2>🧪 Test Functions</h2>
+        <button class="btn" onclick="testBackendHealth()">Test Backend Health</button>
+        <button class="btn" onclick="testTableData()">Test Table Data API</button>
+        <button class="btn" onclick="testWithToken()">Test dengan Token</button>
+        <button class="btn success" onclick="loadIntegrationScript()">Load Integration Script</button>
+        <button class="btn warning" onclick="clearLog()">Clear Log</button>
+    </div>
+
+    <div class="status-card">
+        <h2>🔐 User Authentication</h2>
+        <div>
+            <input type="text" id="username" placeholder="Username (contoh: admin)" style="padding: 8px; margin: 5px; border: 1px solid #ccc; border-radius: 4px;">
+            <input type="password" id="password" placeholder="Password" style="padding: 8px; margin: 5px; border: 1px solid #ccc; border-radius: 4px;">
+            <button class="btn" onclick="testLogin()">Test Login</button>
+            <button class="btn warning" onclick="logout()">Logout</button>
+        </div>
+        <div id="auth-status" style="margin-top: 10px;">
+            <span class="info">Status: Belum login</span>
+        </div>
+    </div>
+
+    <div class="test-results">
+        <h2>📝 Test Log</h2>
+        <div id="log"></div>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'http://localhost:5001';
+        
+        function log(message, type = 'info') {
+            const logElement = document.getElementById('log');
+            const timestamp = new Date().toLocaleTimeString();
+            const colors = {
+                success: '#10b981',
+                error: '#ef4444',
+                warning: '#f59e0b',
+                info: '#3b82f6'
+            };
+            
+            logElement.innerHTML += `<span style="color: ${colors[type] || colors.info}">[${timestamp}] ${message}</span>\n`;
+            logElement.scrollTop = logElement.scrollHeight;
+        }
+        
+        function clearLog() {
+            document.getElementById('log').innerHTML = '';
+            log('Log cleared', 'info');
+        }
+        
+        async function testBackendHealth() {
+            log('🔄 Testing backend health...', 'info');
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/health`);
+                const data = await response.json();
+                
+                if (response.ok) {
+                    log('✅ Backend health check passed: ' + data.message, 'success');
+                    document.getElementById('backend-status').innerHTML = '<span class="success">✅ Backend running on port 5001</span>';
+                } else {
+                    log('❌ Backend health check failed', 'error');
+                    document.getElementById('backend-status').innerHTML = '<span class="error">❌ Backend not responding</span>';
+                }
+            } catch (error) {
+                log('💥 Error testing backend: ' + error.message, 'error');
+                document.getElementById('backend-status').innerHTML = '<span class="error">❌ Backend connection failed</span>';
+            }
+        }
+        
+        async function testTableData() {
+            log('📊 Testing table data API...', 'info');
+            try {
+                const token = localStorage.getItem('token');
+                const headers = {
+                    'Content-Type': 'application/json'
+                };
+                
+                if (token) {
+                    headers['Authorization'] = `Bearer ${token}`;
+                    log('🔐 Using token for request', 'info');
+                }
+                
+                const response = await fetch(`${API_BASE_URL}/api/table-data`, { headers });
+                const data = await response.json();
+                
+                if (response.ok && data.success) {
+                    log(`✅ Table data fetched successfully: ${data.data.length} items`, 'success');
+                    log(`👤 Current user: ${data.currentUser?.username || 'Anonymous'}`, 'info');
+                    log(`📝 User can edit: ${data.userCanEdit || 0} items`, 'info');
+                    
+                    // Show sample data
+                    if (data.data.length > 0) {
+                        const sample = data.data[0];
+                        log(`📋 Sample data: ${sample.judul} by ${sample.nama} (canEdit: ${sample.canEdit})`, 'info');
+                    }
+                } else {
+                    log('❌ Failed to fetch table data: ' + (data.error || 'Unknown error'), 'error');
+                }
+            } catch (error) {
+                log('💥 Error testing table data: ' + error.message, 'error');
+            }
+        }
+        
+        async function testLogin() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            if (!username || !password) {
+                log('⚠️ Please enter username and password', 'warning');
+                return;
+            }
+            
+            log(`🔐 Testing login for user: ${username}`, 'info');
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username, password })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok && data.success) {
+                    localStorage.setItem('token', data.token);
+                    localStorage.setItem('user', JSON.stringify(data.user));
+                    
+                    log('✅ Login successful!', 'success');
+                    log(`👤 Logged in as: ${data.user.username}`, 'success');
+                    
+                    document.getElementById('auth-status').innerHTML = 
+                        `<span class="success">✅ Logged in as: ${data.user.username}</span>`;
+                } else {
+                    log('❌ Login failed: ' + (data.error || 'Invalid credentials'), 'error');
+                }
+            } catch (error) {
+                log('💥 Error during login: ' + error.message, 'error');
+            }
+        }
+        
+        function logout() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            log('👋 Logged out successfully', 'info');
+            document.getElementById('auth-status').innerHTML = 
+                '<span class="info">Status: Belum login</span>';
+        }
+        
+        async function testWithToken() {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                log('⚠️ No token found. Please login first.', 'warning');
+                return;
+            }
+            
+            log('🎯 Testing API with token...', 'info');
+            
+            try {
+                // Test table action
+                const response = await fetch(`${API_BASE_URL}/api/table-action`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        action: 'view',
+                        id: 1
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok && data.success) {
+                    log('✅ Token authentication successful', 'success');
+                    log(`📖 Viewed logbook: ${data.data?.judul_kegiatan || 'N/A'}`, 'info');
+                } else {
+                    log('❌ Token authentication failed: ' + (data.error || 'Unknown error'), 'error');
+                }
+            } catch (error) {
+                log('💥 Error testing with token: ' + error.message, 'error');
+            }
+        }
+        
+        function loadIntegrationScript() {
+            log('🚀 Loading integration script...', 'info');
+            
+            const script = document.createElement('script');
+            script.src = `${API_BASE_URL}/integration/table-integration.js`;
+            script.onload = () => {
+                log('✅ Integration script loaded successfully!', 'success');
+                log('💡 Use window.tableIntegration for debugging', 'info');
+            };
+            script.onerror = () => {
+                log('❌ Failed to load integration script', 'error');
+            };
+            
+            document.head.appendChild(script);
+        }
+        
+        // Auto-check backend status on page load
+        window.addEventListener('load', () => {
+            log('🌟 Test page loaded', 'info');
+            testBackendHealth();
+            
+            // Check if user is already logged in
+            const user = localStorage.getItem('user');
+            if (user) {
+                const userData = JSON.parse(user);
+                document.getElementById('auth-status').innerHTML = 
+                    `<span class="success">✅ Logged in as: ${userData.username}</span>`;
+                log(`👤 Found existing session: ${userData.username}`, 'info');
+            }
+        });
+    </script>
+</body>
+</html>

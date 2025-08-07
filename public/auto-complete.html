@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🚀 Auto-Complete Integration</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+        
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 25px;
+            padding: 40px;
+            max-width: 600px;
+            text-align: center;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .logo {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            animation: bounce 2s infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+        
+        .title {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+            background: linear-gradient(45deg, #10b981, #3b82f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            opacity: 0.9;
+        }
+        
+        .status {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+            border-left: 4px solid #10b981;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: bold;
+            margin: 10px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.4);
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.6);
+        }
+        
+        .btn.secondary {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            box-shadow: 0 5px 15px rgba(59, 130, 246, 0.4);
+        }
+        
+        .btn.secondary:hover {
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.6);
+        }
+        
+        .progress {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 3px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #10b981, #3b82f6);
+            width: 0%;
+            transition: width 0.5s ease;
+            border-radius: 3px;
+        }
+        
+        .feature-list {
+            text-align: left;
+            margin: 20px 0;
+        }
+        
+        .feature-list li {
+            margin: 8px 0;
+            padding-left: 25px;
+            position: relative;
+        }
+        
+        .feature-list li::before {
+            content: "✅";
+            position: absolute;
+            left: 0;
+        }
+        
+        .countdown {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #10b981;
+            margin: 20px 0;
+        }
+        
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #10b981;
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">🚀</div>
+        <h1 class="title">Auto-Complete Integration</h1>
+        <p class="subtitle">Integrasi otomatis Table.js dengan Backend Database</p>
+        
+        <div class="status" id="status">
+            <div class="loading"></div>
+            <span>Memeriksa sistem...</span>
+        </div>
+        
+        <div class="progress">
+            <div class="progress-bar" id="progress"></div>
+        </div>
+        
+        <div id="content">
+            <p>Sistem sedang mempersiapkan integrasi otomatis...</p>
+        </div>
+        
+        <div id="actions" style="display: none;">
+            <a href="http://localhost:5001/auto-table" class="btn" id="autoBtn">
+                🎯 Buka Table.js (Auto-Integrated)
+            </a>
+            <a href="http://localhost:3000/Homepage" class="btn secondary" target="_blank">
+                📖 Buka Table.js (Manual)
+            </a>
+        </div>
+        
+        <div id="countdown-container" style="display: none;">
+            <p>Auto-redirect dalam:</p>
+            <div class="countdown" id="countdown">5</div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'http://localhost:5001';
+        const FRONTEND_URL = 'http://localhost:3000';
+        
+        let progress = 0;
+        let checks = [
+            { name: 'Backend API', url: `${API_BASE_URL}/api/health`, status: false },
+            { name: 'Database Connection', url: `${API_BASE_URL}/debug/test-db`, status: false },
+            { name: 'Table Data', url: `${API_BASE_URL}/api/table-data`, status: false },
+            { name: 'Frontend React', url: `${FRONTEND_URL}/Homepage`, status: false }
+        ];
+        
+        function updateProgress(percent) {
+            document.getElementById('progress').style.width = percent + '%';
+        }
+        
+        function updateStatus(message, isLoading = true) {
+            const statusEl = document.getElementById('status');
+            statusEl.innerHTML = isLoading ? 
+                `<div class="loading"></div><span>${message}</span>` :
+                `<span>${message}</span>`;
+        }
+        
+        async function checkSystem() {
+            updateStatus('Memeriksa Backend API...');
+            
+            for (let i = 0; i < checks.length; i++) {
+                const check = checks[i];
+                updateStatus(`Memeriksa ${check.name}...`);
+                
+                try {
+                    const response = await fetch(check.url);
+                    check.status = response.ok;
+                } catch (error) {
+                    check.status = false;
+                }
+                
+                progress = ((i + 1) / checks.length) * 100;
+                updateProgress(progress);
+                
+                await new Promise(resolve => setTimeout(resolve, 500));
+            }
+            
+            showResults();
+        }
+        
+        function showResults() {
+            const allGood = checks.every(check => check.status);
+            const backendOk = checks.slice(0, 3).every(check => check.status);
+            
+            if (allGood) {
+                updateStatus('✅ Semua sistem siap! Integrasi otomatis tersedia.', false);
+                document.getElementById('content').innerHTML = `
+                    <div class="feature-list">
+                        <h3>🎉 Sistem Siap!</h3>
+                        <ul>
+                            <li>Backend API berjalan di port 5001</li>
+                            <li>Database PostgreSQL terhubung</li>
+                            <li>Data logbook tersedia (${checks.find(c => c.name === 'Table Data').status ? '✅' : '❌'})</li>
+                            <li>Frontend React berjalan di port 3000</li>
+                        </ul>
+                    </div>
+                `;
+                document.getElementById('actions').style.display = 'block';
+                startCountdown();
+            } else if (backendOk) {
+                updateStatus('⚠️ Backend siap, Frontend perlu diperiksa', false);
+                document.getElementById('content').innerHTML = `
+                    <div class="feature-list">
+                        <h3>⚠️ Sebagian Siap</h3>
+                        <ul>
+                            <li>Backend API: ${checks[0].status ? '✅' : '❌'}</li>
+                            <li>Database: ${checks[1].status ? '✅' : '❌'}</li>
+                            <li>Table Data: ${checks[2].status ? '✅' : '❌'}</li>
+                            <li>Frontend React: ${checks[3].status ? '✅' : '❌'}</li>
+                        </ul>
+                        <p style="margin-top: 15px;">
+                            ${!checks[3].status ? '⚠️ Frontend tidak dapat diakses. Pastikan React app berjalan di port 3000.' : ''}
+                        </p>
+                    </div>
+                `;
+                document.getElementById('actions').style.display = 'block';
+            } else {
+                updateStatus('❌ Sistem belum siap', false);
+                document.getElementById('content').innerHTML = `
+                    <div class="feature-list">
+                        <h3>❌ Sistem Belum Siap</h3>
+                        <ul>
+                            <li>Backend API: ${checks[0].status ? '✅' : '❌'}</li>
+                            <li>Database: ${checks[1].status ? '✅' : '❌'}</li>
+                            <li>Table Data: ${checks[2].status ? '✅' : '❌'}</li>
+                            <li>Frontend React: ${checks[3].status ? '✅' : '❌'}</li>
+                        </ul>
+                        <p style="margin-top: 15px;">
+                            ⚠️ Pastikan backend berjalan dengan: <code>npm start</code> di folder backend-tonata-logbook
+                        </p>
+                    </div>
+                `;
+            }
+        }
+        
+        function startCountdown() {
+            document.getElementById('countdown-container').style.display = 'block';
+            let count = 5;
+            
+            const timer = setInterval(() => {
+                count--;
+                document.getElementById('countdown').textContent = count;
+                
+                if (count <= 0) {
+                    clearInterval(timer);
+                    window.location.href = 'http://localhost:5001/auto-table';
+                }
+            }, 1000);
+        }
+        
+        // Start system check
+        window.addEventListener('load', () => {
+            setTimeout(checkSystem, 1000);
+        });
+    </script>
+</body>
+</html>
