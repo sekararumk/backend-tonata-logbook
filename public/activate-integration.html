@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aktivasi Integrasi Table.js</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: white;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .step {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 4px solid #10b981;
+        }
+        .code-block {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            margin: 10px 0;
+            overflow-x: auto;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .btn {
+            background: #10b981;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            margin: 10px 5px;
+        }
+        .btn:hover {
+            background: #059669;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+        }
+        .btn.secondary {
+            background: #3b82f6;
+        }
+        .btn.secondary:hover {
+            background: #2563eb;
+        }
+        .success { color: #10b981; font-weight: bold; }
+        .warning { color: #fbbf24; font-weight: bold; }
+        .info { color: #60a5fa; font-weight: bold; }
+        .bookmarklet {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border: 2px dashed rgba(255, 255, 255, 0.3);
+        }
+        .drag-instruction {
+            text-align: center;
+            font-style: italic;
+            color: #fbbf24;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 Aktivasi Integrasi Table.js</h1>
+            <p>Menghubungkan frontend Table.js dengan backend database</p>
+        </div>
+
+        <div class="step">
+            <h2>📋 Status Backend</h2>
+            <div id="backend-status">
+                <span class="info">🔄 Checking backend...</span>
+            </div>
+            <button class="btn secondary" onclick="checkBackend()">Cek Status Backend</button>
+        </div>
+
+        <div class="step">
+            <h2>🎯 Cara 1: Inject Manual (Recommended)</h2>
+            <p>1. Buka halaman Table.js di tab lain: <a href="http://localhost:3000/Homepage" target="_blank" style="color: #60a5fa;">http://localhost:3000/Homepage</a></p>
+            <p>2. Buka Developer Tools (tekan F12)</p>
+            <p>3. Pilih tab "Console"</p>
+            <p>4. Copy dan paste script berikut:</p>
+            <div class="code-block" id="inject-script">
+const script = document.createElement('script');
+script.src = 'http://localhost:5001/integration/table-integration.js';
+script.onload = () => console.log('✅ Integration script loaded!');
+script.onerror = () => console.log('❌ Failed to load integration script');
+document.head.appendChild(script);
+            </div>
+            <button class="btn" onclick="copyScript()">📋 Copy Script</button>
+        </div>
+
+        <div class="step">
+            <h2>🔖 Cara 2: Bookmarklet (Drag & Drop)</h2>
+            <p>Drag tombol berikut ke bookmark bar browser Anda:</p>
+            <div class="bookmarklet">
+                <a href="javascript:(function(){const script=document.createElement('script');script.src='http://localhost:5001/integration/table-integration.js';script.onload=()=>alert('✅ Table.js Integration Activated!');script.onerror=()=>alert('❌ Failed to load integration script');document.head.appendChild(script);})();" 
+                   class="btn">🔗 Activate Table Integration</a>
+            </div>
+            <div class="drag-instruction">
+                👆 Drag tombol di atas ke bookmark bar, lalu klik saat berada di halaman Table.js
+            </div>
+        </div>
+
+        <div class="step">
+            <h2>🧪 Cara 3: Test Integration</h2>
+            <p>Test integrasi langsung dari halaman ini:</p>
+            <button class="btn" onclick="testIntegration()">🚀 Test Integration</button>
+            <button class="btn secondary" onclick="openTablePage()">📖 Buka Table.js</button>
+        </div>
+
+        <div class="step">
+            <h2>📊 Data Preview</h2>
+            <p>Data yang akan ditampilkan di Table.js:</p>
+            <div id="data-preview">
+                <span class="info">Klik "Load Data Preview" untuk melihat data</span>
+            </div>
+            <button class="btn secondary" onclick="loadDataPreview()">📊 Load Data Preview</button>
+        </div>
+
+        <div class="step">
+            <h2>🔐 Login untuk Testing</h2>
+            <p>Login untuk test permission control:</p>
+            <input type="text" id="username" placeholder="Username (admin, sekar, dll)" 
+                   style="padding: 10px; margin: 5px; border: none; border-radius: 5px; background: rgba(255,255,255,0.2); color: white; width: 200px;">
+            <input type="password" id="password" placeholder="Password" 
+                   style="padding: 10px; margin: 5px; border: none; border-radius: 5px; background: rgba(255,255,255,0.2); color: white; width: 200px;">
+            <button class="btn" onclick="testLogin()">🔑 Login</button>
+            <div id="login-status" style="margin-top: 10px;">
+                <span class="info">Status: Belum login</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'http://localhost:5001';
+
+        async function checkBackend() {
+            const statusEl = document.getElementById('backend-status');
+            statusEl.innerHTML = '<span class="info">🔄 Checking...</span>';
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/health`);
+                const data = await response.json();
+                
+                if (response.ok) {
+                    statusEl.innerHTML = '<span class="success">✅ Backend running on port 5001</span>';
+                } else {
+                    statusEl.innerHTML = '<span class="warning">⚠️ Backend responding but with errors</span>';
+                }
+            } catch (error) {
+                statusEl.innerHTML = '<span class="warning">❌ Backend not reachable - pastikan backend berjalan</span>';
+            }
+        }
+
+        function copyScript() {
+            const script = document.getElementById('inject-script').textContent;
+            navigator.clipboard.writeText(script).then(() => {
+                alert('✅ Script copied to clipboard!\nSekarang paste di console browser halaman Table.js');
+            });
+        }
+
+        async function testIntegration() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/table-data`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert(`✅ Integration test successful!\n\nData found: ${data.data.length} logbook entries\nBackend: Connected\nDatabase: Connected`);
+                } else {
+                    alert(`❌ Integration test failed:\n${data.error}`);
+                }
+            } catch (error) {
+                alert(`❌ Integration test failed:\n${error.message}`);
+            }
+        }
+
+        function openTablePage() {
+            window.open('http://localhost:3000/Homepage', '_blank');
+        }
+
+        async function loadDataPreview() {
+            const previewEl = document.getElementById('data-preview');
+            previewEl.innerHTML = '<span class="info">🔄 Loading data...</span>';
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/table-data`);
+                const data = await response.json();
+                
+                if (data.success && data.data.length > 0) {
+                    let preview = '<div style="background: rgba(0,0,0,0.2); padding: 15px; border-radius: 8px; margin-top: 10px;">';
+                    preview += `<strong>📊 Found ${data.data.length} logbook entries:</strong><br><br>`;
+                    
+                    data.data.slice(0, 3).forEach((item, index) => {
+                        preview += `${index + 1}. <strong>${item.judul}</strong> by ${item.nama}<br>`;
+                        preview += `   📅 ${new Date(item.date).toLocaleDateString()}<br>`;
+                        preview += `   📝 ${item.keterangan.substring(0, 50)}...<br><br>`;
+                    });
+                    
+                    if (data.data.length > 3) {
+                        preview += `... dan ${data.data.length - 3} lainnya`;
+                    }
+                    
+                    preview += '</div>';
+                    previewEl.innerHTML = preview;
+                } else {
+                    previewEl.innerHTML = '<span class="warning">⚠️ No data found in database</span>';
+                }
+            } catch (error) {
+                previewEl.innerHTML = '<span class="warning">❌ Failed to load data preview</span>';
+            }
+        }
+
+        async function testLogin() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const statusEl = document.getElementById('login-status');
+            
+            if (!username || !password) {
+                alert('⚠️ Please enter username and password');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok && data.success) {
+                    localStorage.setItem('token', data.token);
+                    localStorage.setItem('user', JSON.stringify(data.user));
+                    statusEl.innerHTML = `<span class="success">✅ Logged in as: ${data.user.username}</span>`;
+                    alert('✅ Login successful! Sekarang Anda bisa test permission control di Table.js');
+                } else {
+                    statusEl.innerHTML = '<span class="warning">❌ Login failed</span>';
+                    alert('❌ Login failed: ' + (data.error || 'Invalid credentials'));
+                }
+            } catch (error) {
+                statusEl.innerHTML = '<span class="warning">❌ Login error</span>';
+                alert('❌ Login error: ' + error.message);
+            }
+        }
+
+        // Auto-check backend on load
+        window.addEventListener('load', () => {
+            checkBackend();
+            
+            // Check if user is already logged in
+            const user = localStorage.getItem('user');
+            if (user) {
+                const userData = JSON.parse(user);
+                document.getElementById('login-status').innerHTML = 
+                    `<span class="success">✅ Already logged in as: ${userData.username}</span>`;
+            }
+        });
+    </script>
+</body>
+</html>

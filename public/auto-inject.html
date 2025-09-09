@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Auto-Inject Integration</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 50px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .btn {
+            background: #10b981;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: bold;
+            margin: 10px;
+            transition: all 0.3s ease;
+        }
+        .btn:hover {
+            background: #059669;
+            transform: translateY(-2px);
+        }
+        .status {
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 Auto-Inject Table Integration</h1>
+        <p>Halaman ini akan otomatis mengaktifkan integrasi Table.js</p>
+        
+        <div class="status" id="status">
+            <span>🔄 Preparing integration...</span>
+        </div>
+        
+        <button class="btn" onclick="openAndInject()">📖 Buka Table.js + Auto-Inject</button>
+        <button class="btn" onclick="injectOnly()">🔗 Inject ke Tab yang Sudah Terbuka</button>
+        
+        <div style="margin-top: 30px; font-size: 14px; opacity: 0.8;">
+            <p>💡 Tips: Pastikan backend berjalan di port 5001</p>
+            <p>🔐 Login dengan username: admin, sekar, akbar, alfi, dll</p>
+        </div>
+    </div>
+
+    <script>
+        function updateStatus(message, type = 'info') {
+            const statusEl = document.getElementById('status');
+            const colors = {
+                success: '#10b981',
+                error: '#ef4444',
+                warning: '#f59e0b',
+                info: '#3b82f6'
+            };
+            statusEl.innerHTML = `<span style="color: ${colors[type]}">${message}</span>`;
+        }
+
+        async function checkBackend() {
+            try {
+                const response = await fetch('http://localhost:5001/api/health');
+                if (response.ok) {
+                    updateStatus('✅ Backend ready - Integration dapat diaktifkan', 'success');
+                    return true;
+                } else {
+                    updateStatus('⚠️ Backend responding but with issues', 'warning');
+                    return false;
+                }
+            } catch (error) {
+                updateStatus('❌ Backend not reachable - Pastikan backend berjalan di port 5001', 'error');
+                return false;
+            }
+        }
+
+        function openAndInject() {
+            updateStatus('🔄 Opening Table.js and preparing injection...', 'info');
+            
+            // Open Table.js page
+            const tableWindow = window.open('http://localhost:3000/Homepage', '_blank');
+            
+            // Wait for page to load, then inject
+            setTimeout(() => {
+                if (tableWindow) {
+                    try {
+                        // Inject script into the opened window
+                        const script = tableWindow.document.createElement('script');
+                        script.src = 'http://localhost:5001/integration/table-integration.js';
+                        script.onload = () => {
+                            updateStatus('🎉 Integration activated successfully!', 'success');
+                            alert('✅ Integration berhasil diaktifkan!\nLihat perubahan data di halaman Table.js');
+                        };
+                        script.onerror = () => {
+                            updateStatus('❌ Failed to inject script', 'error');
+                            alert('❌ Gagal mengaktifkan integrasi. Coba manual injection.');
+                        };
+                        tableWindow.document.head.appendChild(script);
+                    } catch (error) {
+                        // Cross-origin restriction, fallback to manual instruction
+                        updateStatus('⚠️ Auto-injection blocked - Use manual method', 'warning');
+                        alert('🔒 Browser memblokir auto-injection.\n\nSilakan:\n1. Buka Developer Tools (F12) di halaman Table.js\n2. Paste script ini di Console:\n\nconst script = document.createElement(\'script\');\nscript.src = \'http://localhost:5001/integration/table-integration.js\';\ndocument.head.appendChild(script);');
+                    }
+                } else {
+                    updateStatus('❌ Failed to open Table.js page', 'error');
+                }
+            }, 2000);
+        }
+
+        function injectOnly() {
+            updateStatus('📋 Copying injection script to clipboard...', 'info');
+            
+            const injectionScript = `const script = document.createElement('script');
+script.src = 'http://localhost:5001/integration/table-integration.js';
+script.onload = () => alert('✅ Table.js Integration Activated!');
+script.onerror = () => alert('❌ Failed to load integration script');
+document.head.appendChild(script);`;
+
+            navigator.clipboard.writeText(injectionScript).then(() => {
+                updateStatus('✅ Script copied to clipboard!', 'success');
+                alert('✅ Script copied to clipboard!\n\n1. Buka halaman Table.js\n2. Tekan F12 → Console\n3. Paste (Ctrl+V) → Enter');
+            }).catch(() => {
+                updateStatus('⚠️ Manual copy required', 'warning');
+                prompt('Copy script ini dan paste di Console halaman Table.js:', injectionScript);
+            });
+        }
+
+        // Auto-check backend on load
+        window.addEventListener('load', () => {
+            checkBackend();
+        });
+    </script>
+</body>
+</html>
